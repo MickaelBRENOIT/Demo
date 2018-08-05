@@ -15,6 +15,7 @@
         android:layout_marginLeft="@dimen/thirty_two"
         android:layout_marginRight="@dimen/thirty_two"
         android:layout_marginBottom="@dimen/eight"
+        app:errorEnabled="true"
         android:gravity="center">
 
         <android.support.design.widget.TextInputEditText
@@ -32,6 +33,7 @@
         android:layout_marginLeft="@dimen/thirty_two"
         android:layout_marginRight="@dimen/thirty_two"
         android:layout_marginBottom="@dimen/eight"
+        app:errorEnabled="true"
         android:gravity="center">
 
         <android.support.design.widget.TextInputEditText

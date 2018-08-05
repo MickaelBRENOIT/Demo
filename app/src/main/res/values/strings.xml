@@ -3,4 +3,6 @@
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
+    <string name="username_check_empty">Username can\'t be empty !</string>
+    <string name="password_check_empty">Password can\'t be empty !</string>
 </resources>
