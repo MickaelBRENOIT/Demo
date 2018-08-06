@@ -1,6 +1,8 @@
 package com.mickaelbrenoit.demo;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
@@ -46,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
             user.setUsername(username);
             user.setPassword(password);
 
-            LoginAsyncTask loginAsyncTask = new LoginAsyncTask(getApplicationContext());
+            LoginAsyncTask loginAsyncTask = new LoginAsyncTask(LoginActivity.this);
             loginAsyncTask.execute(user);
 
         }
@@ -115,7 +117,8 @@ public class LoginActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             if (user != null) {
-                Toast.makeText(context, "Log in !!!", Toast.LENGTH_LONG).show();
+                ((Activity) context).finish();
+                context.startActivity(new Intent(context, FragmentActivity.class));
             } else {
                 Toast.makeText(context, "This user doesn't exist...", Toast.LENGTH_LONG).show();
             }
