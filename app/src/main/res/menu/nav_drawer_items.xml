@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item android:title="@string/languages_menu" android:enabled="false">
+        <menu>
+            <item
+                android:id="@+id/nav_english"
+                android:icon="@drawable/ic_flag_black_24dp"
+                android:title="@string/english_menu"
+                android:onClick="onItemClick"/>
+            <item
+                android:id="@+id/nav_french"
+                android:icon="@drawable/ic_flag_black_24dp"
+                android:title="@string/french_menu"
+                android:onClick="onItemClick"/>
+        </menu>
+    </item>
+
+    <item
+        android:title="@string/help_menu" android:enabled="false">
+        <menu>
+            <item
+                android:id="@+id/nav_clear_database"
+                android:icon="@drawable/ic_clear_black_24dp"
+                android:title="@string/clear_database_menu"
+                android:onClick="onItemClick"/>
+            <item
+                android:id="@+id/nav_logout"
+                android:icon="@drawable/ic_exit_to_app_black_24dp"
+                android:title="@string/logout_menu"
+                android:onClick="onItemClick"/>
+        </menu>
+    </item>
+
+</menu>

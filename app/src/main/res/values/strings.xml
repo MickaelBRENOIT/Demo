@@ -11,4 +11,11 @@
     <string name="title_notifications">Notifications</string>
     <string name="button_add_post">Add a post</string>
     <string name="display_content_post">display content</string>
+    <string name="languages_menu">Languages</string>
+    <string name="english_menu">English</string>
+    <string name="french_menu">French</string>
+    <string name="help_menu">Help</string>
+    <string name="clear_database_menu">Clear Database</string>
+    <string name="logout_menu">Logout</string>
+    <string name="welcome_header">Welcome</string>
 </resources>

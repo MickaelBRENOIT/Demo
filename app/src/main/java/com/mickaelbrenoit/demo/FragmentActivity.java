@@ -2,9 +2,9 @@ package com.mickaelbrenoit.demo;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.mickaelbrenoit.demo.fragment.PostFragment;
@@ -12,9 +12,9 @@ import com.mickaelbrenoit.demo.fragment.PostFragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class FragmentActivity extends AppCompatActivity {
+public class FragmentActivity extends NavigationDrawerActivity {
 
-    @BindView(R.id.navigation)
+    @Nullable @BindView(R.id.navigation)
     BottomNavigationView navigation;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
