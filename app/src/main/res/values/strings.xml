@@ -6,10 +6,10 @@
     <string name="username_check_empty">Username can\'t be empty !</string>
     <string name="password_check_empty">Password can\'t be empty !</string>
     <string name="title_activity_fragment">FragmentActivity</string>
-    <string name="title_post">My Posts</string>
+    <string name="title_my_posts">My Posts</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
-    <string name="button_add_post">Add a post</string>
+    <string name="button_add_post">Add a Post</string>
     <string name="display_content_post">display content</string>
     <string name="languages_menu">Languages</string>
     <string name="english_menu">English</string>
@@ -18,4 +18,8 @@
     <string name="clear_database_menu">Clear Database</string>
     <string name="logout_menu">Logout</string>
     <string name="welcome_header">Welcome</string>
+    <string name="title_post">Title</string>
+    <string name="body_post">Body</string>
+    <string name="button_validate">Validate</string>
+    <string name="button_cancel">Cancel</string>
 </resources>

@@ -24,7 +24,8 @@
         <activity
             android:name=".FragmentActivity"
             android:label="@string/title_activity_fragment" />
-        <!--<activity android:name=".NavigationDrawerActivity"></activity>-->
+        <!-- <activity android:name=".NavigationDrawerActivity"></activity> -->
+        <activity android:name=".AddOrModifyPostActivity"></activity>
     </application>
 
 </manifest>

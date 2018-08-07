@@ -1,5 +1,6 @@
 package com.mickaelbrenoit.demo.fragment;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.mickaelbrenoit.demo.AddOrModifyPostActivity;
 import com.mickaelbrenoit.demo.R;
 import com.mickaelbrenoit.demo.adapter.ListPostsAdapter;
 import com.mickaelbrenoit.demo.api.JsonApi;
@@ -26,13 +28,17 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Optional;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.mickaelbrenoit.demo.RequestCode.PUT_EXTRA_TITLE_POST;
 import static com.mickaelbrenoit.demo.RequestCode.PUT_EXTRA_USER_LOGGED;
+import static com.mickaelbrenoit.demo.RequestCode.RESULT_CODE_ADD_POST;
 import static com.mickaelbrenoit.demo.api.JsonApi.BASE_URL;
 
 public class PostFragment extends Fragment {
@@ -129,5 +135,13 @@ public class PostFragment extends Fragment {
             });
             return null;
         }
+    }
+
+    @Optional
+    @OnClick(R.id.button_add_post)
+    public void addPost(View v) {
+        Intent intent = new Intent(getActivity(), AddOrModifyPostActivity.class);
+        intent.putExtra(PUT_EXTRA_TITLE_POST, getString(R.string.button_add_post));
+        startActivityForResult(intent, RESULT_CODE_ADD_POST);
     }
 }
