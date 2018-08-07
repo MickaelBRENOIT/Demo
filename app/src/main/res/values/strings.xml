@@ -9,7 +9,7 @@
     <string name="title_post">My Posts</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
-    <string name="button_add_post">Add a postApi</string>
+    <string name="button_add_post">Add a post</string>
     <string name="display_content_post">display content</string>
     <string name="languages_menu">Languages</string>
     <string name="english_menu">English</string>

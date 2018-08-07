@@ -10,6 +10,7 @@ import com.mickaelbrenoit.demo.database.model.Post;
 
 import java.util.List;
 
+import static com.mickaelbrenoit.demo.database.Names.FOREIGN_KEY_USERID_POST;
 import static com.mickaelbrenoit.demo.database.Names.TABLE_NAME_POST;
 
 @Dao
@@ -26,4 +27,7 @@ public interface PostDao {
 
     @Query("SELECT * FROM " + TABLE_NAME_POST)
     List<Post> getAllPosts();
+
+    @Query("SELECT * FROM " + TABLE_NAME_POST + " WHERE " + FOREIGN_KEY_USERID_POST + " = :userLoggedId")
+    List<Post> getAllPostsByUserId(int userLoggedId);
 }

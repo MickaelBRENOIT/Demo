@@ -19,6 +19,7 @@ import com.mickaelbrenoit.demo.api.JsonApi;
 import com.mickaelbrenoit.demo.api.model.PostApi;
 import com.mickaelbrenoit.demo.database.DatabaseSingleton;
 import com.mickaelbrenoit.demo.database.model.Post;
+import com.mickaelbrenoit.demo.database.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,12 +41,19 @@ public class PostFragment extends Fragment {
     @BindView(R.id.recyclerView_posts)
     RecyclerView recyclerView_posts;
 
+    User userLogged;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_post, null);
 
         ButterKnife.bind(this, view);
+
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            userLogged = bundle.getParcelable("USER_LOGGED");
+        }
 
         Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
 
@@ -56,13 +64,10 @@ public class PostFragment extends Fragment {
             @Override
             public void onResponse(Call<List<PostApi>> call, Response<List<PostApi>> response) {
                 Log.d(TAG, "onResponse: Server response: " + response.toString());
-//                Log.d(TAG, "onResponse: received information: " + response.body().toString());
                 Log.d(TAG, "onResponse: size: " +  response.body().size());
 
                 List<Post> postList = new ArrayList<>();
                 for (PostApi postApi : response.body()) {
-                    // TODO - insert all posts in database
-                    Log.d(TAG, "onResponse: --> " + postApi.getTitle());
                     postList.add(new Post(postApi.getId(), postApi.getTitle(), postApi.getBody(), postApi.getUserId()));
                 }
 
@@ -91,17 +96,37 @@ public class PostFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... voids) {
             DatabaseSingleton db = DatabaseSingleton.getAppDatabase(getActivity().getApplicationContext());
-            db.postDao().insertAllPosts(postList);
+            Log.d(TAG, "doInBackground: --> " + db.postDao().getAllPosts().size());
+            if (db.postDao().getAllPosts().isEmpty()) {
+                db.postDao().insertAllPosts(postList);
+            }
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            ListPostsAdapter listPostsAdapter = new ListPostsAdapter(postList);
-            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
-            recyclerView_posts.setLayoutManager(mLayoutManager);
-            recyclerView_posts.setItemAnimator(new DefaultItemAnimator());
-            recyclerView_posts.setAdapter(listPostsAdapter);
+            GetAllPostsByUserIdAsyncTask getAllPostsByUserIdAsyncTask = new GetAllPostsByUserIdAsyncTask();
+            getAllPostsByUserIdAsyncTask.execute();
+        }
+    }
+
+    private class GetAllPostsByUserIdAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            DatabaseSingleton db = DatabaseSingleton.getAppDatabase(getActivity().getApplicationContext());
+            List<Post> postListByUserId = db.postDao().getAllPostsByUserId(userLogged.getId());
+            final ListPostsAdapter listPostsAdapter = new ListPostsAdapter(postListByUserId);
+            final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    recyclerView_posts.setLayoutManager(mLayoutManager);
+                    recyclerView_posts.setItemAnimator(new DefaultItemAnimator());
+                    recyclerView_posts.setAdapter(listPostsAdapter);
+                }
+            });
+            return null;
         }
     }
 }

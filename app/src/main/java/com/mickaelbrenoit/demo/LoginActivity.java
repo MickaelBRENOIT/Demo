@@ -118,7 +118,9 @@ public class LoginActivity extends AppCompatActivity {
             super.onPostExecute(aVoid);
             if (user != null) {
                 ((Activity) context).finish();
-                context.startActivity(new Intent(context, FragmentActivity.class));
+                Intent intent = new Intent(context, FragmentActivity.class);
+                intent.putExtra("USER_LOGGED", user);
+                context.startActivity(intent);
             } else {
                 Toast.makeText(context, "This user doesn't exist...", Toast.LENGTH_LONG).show();
             }
