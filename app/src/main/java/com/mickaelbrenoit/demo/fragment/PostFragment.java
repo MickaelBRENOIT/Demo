@@ -1,5 +1,6 @@
 package com.mickaelbrenoit.demo.fragment;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,7 +17,10 @@ import com.mickaelbrenoit.demo.R;
 import com.mickaelbrenoit.demo.adapter.ListPostsAdapter;
 import com.mickaelbrenoit.demo.api.JsonApi;
 import com.mickaelbrenoit.demo.api.model.PostApi;
+import com.mickaelbrenoit.demo.database.DatabaseSingleton;
+import com.mickaelbrenoit.demo.database.model.Post;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -55,18 +59,16 @@ public class PostFragment extends Fragment {
 //                Log.d(TAG, "onResponse: received information: " + response.body().toString());
                 Log.d(TAG, "onResponse: size: " +  response.body().size());
 
+                List<Post> postList = new ArrayList<>();
                 for (PostApi postApi : response.body()) {
                     // TODO - insert all posts in database
                     Log.d(TAG, "onResponse: --> " + postApi.getTitle());
+                    postList.add(new Post(postApi.getId(), postApi.getTitle(), postApi.getBody(), postApi.getUserId()));
                 }
 
-                // instantiate recyclerView
-                ListPostsAdapter listPostsAdapter = new ListPostsAdapter(response.body());
-                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
-                recyclerView_posts.setLayoutManager(mLayoutManager);
-                recyclerView_posts.setItemAnimator(new DefaultItemAnimator());
-//        recyclerView_liste_interventions.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-                recyclerView_posts.setAdapter(listPostsAdapter);
+                AddAllPostsAsyncTask addAllPostsAsyncTask = new AddAllPostsAsyncTask(postList);
+                addAllPostsAsyncTask.execute();
+
             }
 
             @Override
@@ -76,5 +78,30 @@ public class PostFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private class AddAllPostsAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        private List<com.mickaelbrenoit.demo.database.model.Post> postList;
+
+        public AddAllPostsAsyncTask(List<com.mickaelbrenoit.demo.database.model.Post> postList) {
+            this.postList = postList;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            DatabaseSingleton db = DatabaseSingleton.getAppDatabase(getActivity().getApplicationContext());
+            db.postDao().insertAllPosts(postList);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            ListPostsAdapter listPostsAdapter = new ListPostsAdapter(postList);
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+            recyclerView_posts.setLayoutManager(mLayoutManager);
+            recyclerView_posts.setItemAnimator(new DefaultItemAnimator());
+            recyclerView_posts.setAdapter(listPostsAdapter);
+        }
     }
 }

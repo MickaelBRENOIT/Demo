@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mickaelbrenoit.demo.R;
-import com.mickaelbrenoit.demo.api.model.PostApi;
+import com.mickaelbrenoit.demo.database.model.Post;
 
 import java.util.List;
 
@@ -20,10 +20,10 @@ public class ListPostsAdapter extends RecyclerView.Adapter<ListPostsAdapter.View
 
     private static final String TAG = "ListPostsAdapter";
 
-    private List<PostApi> postApiList;
+    private List<Post> postList;
 
-    public ListPostsAdapter(List<PostApi> postApiList) {
-        this.postApiList = postApiList;
+    public ListPostsAdapter(List<Post> postList) {
+        this.postList = postList;
     }
 
     public class ViewHolderPost extends RecyclerView.ViewHolder {
@@ -54,10 +54,10 @@ public class ListPostsAdapter extends RecyclerView.Adapter<ListPostsAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolderPost holder, int position) {
-        final PostApi postApi = postApiList.get(position);
+        final Post post = postList.get(position);
 
-        holder.textView_title_post.setText(postApi.getTitle());
-        holder.textView_content_post.setText(postApi.getBody());
+        holder.textView_title_post.setText(post.getTitle());
+        holder.textView_content_post.setText(post.getBody());
 
         holder.imageView_arrow_up_post.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,6 +76,6 @@ public class ListPostsAdapter extends RecyclerView.Adapter<ListPostsAdapter.View
 
     @Override
     public int getItemCount() {
-        return postApiList.size();
+        return postList.size();
     }
 }
