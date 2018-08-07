@@ -14,6 +14,8 @@ import com.mickaelbrenoit.demo.fragment.PostFragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.mickaelbrenoit.demo.RequestCode.PUT_EXTRA_USER_LOGGED;
+
 public class FragmentActivity extends NavigationDrawerActivity {
 
     @Nullable @BindView(R.id.navigation)
@@ -48,7 +50,7 @@ public class FragmentActivity extends NavigationDrawerActivity {
         ButterKnife.bind(this);
 
         Intent intent = getIntent();
-        userLogged = intent.getParcelableExtra("USER_LOGGED");
+        userLogged = intent.getParcelableExtra(PUT_EXTRA_USER_LOGGED);
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
@@ -59,7 +61,7 @@ public class FragmentActivity extends NavigationDrawerActivity {
         if (fragment != null) {
             if (user != null) {
                 Bundle bundle = new Bundle();
-                bundle.putParcelable("USER_LOGGED", user);
+                bundle.putParcelable(PUT_EXTRA_USER_LOGGED, user);
                 fragment.setArguments(bundle);
             }
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();

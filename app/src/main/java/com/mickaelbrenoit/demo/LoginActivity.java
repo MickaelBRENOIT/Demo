@@ -19,6 +19,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.mickaelbrenoit.demo.RequestCode.PUT_EXTRA_USER_LOGGED;
+
 public class LoginActivity extends AppCompatActivity {
 
     @BindView(R.id.textInputLayout_username)
@@ -119,7 +121,7 @@ public class LoginActivity extends AppCompatActivity {
             if (user != null) {
                 ((Activity) context).finish();
                 Intent intent = new Intent(context, FragmentActivity.class);
-                intent.putExtra("USER_LOGGED", user);
+                intent.putExtra(PUT_EXTRA_USER_LOGGED, user);
                 context.startActivity(intent);
             } else {
                 Toast.makeText(context, "This user doesn't exist...", Toast.LENGTH_LONG).show();

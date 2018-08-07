@@ -32,6 +32,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.mickaelbrenoit.demo.RequestCode.PUT_EXTRA_USER_LOGGED;
 import static com.mickaelbrenoit.demo.api.JsonApi.BASE_URL;
 
 public class PostFragment extends Fragment {
@@ -52,7 +53,7 @@ public class PostFragment extends Fragment {
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            userLogged = bundle.getParcelable("USER_LOGGED");
+            userLogged = bundle.getParcelable(PUT_EXTRA_USER_LOGGED);
         }
 
         Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
