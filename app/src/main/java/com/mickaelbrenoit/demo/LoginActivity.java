@@ -72,6 +72,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean validateUsername() {
         if (textInputEditText_username.getText().toString().length() == 0) {
+            textInputLayout_username.setErrorEnabled(true);
             textInputLayout_username.setError(getString(R.string.username_check_empty));
             return false;
         } else {
@@ -83,6 +84,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean validatePassword() {
         if (textInputEditText_password.getText().toString().length() == 0) {
+            textInputLayout_password.setErrorEnabled(true);
             textInputLayout_password.setError(getString(R.string.password_check_empty));
             return false;
         } else {
