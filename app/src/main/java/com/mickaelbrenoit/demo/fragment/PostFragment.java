@@ -53,6 +53,8 @@ public class PostFragment extends Fragment {
     RecyclerView recyclerView_posts;
 
     User userLogged;
+    static List<Post> postList = new ArrayList<>();
+    static ListPostsAdapter listPostsAdapter;
 
     @Nullable
     @Override
@@ -77,12 +79,12 @@ public class PostFragment extends Fragment {
                 Log.d(TAG, "onResponse: Server response: " + response.toString());
                 Log.d(TAG, "onResponse: size: " +  response.body().size());
 
-                List<Post> postList = new ArrayList<>();
+
                 for (PostApi postApi : response.body()) {
                     postList.add(new Post(postApi.getId(), postApi.getTitle(), postApi.getBody(), postApi.getUserId()));
                 }
 
-                AddAllPostsAsyncTask addAllPostsAsyncTask = new AddAllPostsAsyncTask(postList);
+                AddAllPostsAsyncTask addAllPostsAsyncTask = new AddAllPostsAsyncTask();
                 addAllPostsAsyncTask.execute();
 
             }
@@ -149,12 +151,6 @@ public class PostFragment extends Fragment {
 
     private class AddAllPostsAsyncTask extends AsyncTask<Void, Void, Void> {
 
-        private List<com.mickaelbrenoit.demo.database.model.Post> postList;
-
-        public AddAllPostsAsyncTask(List<com.mickaelbrenoit.demo.database.model.Post> postList) {
-            this.postList = postList;
-        }
-
         @Override
         protected Void doInBackground(Void... voids) {
             DatabaseSingleton db = DatabaseSingleton.getAppDatabase(getActivity().getApplicationContext());
@@ -167,18 +163,18 @@ public class PostFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            GetAllPostsByUserIdAsyncTask getAllPostsByUserIdAsyncTask = new GetAllPostsByUserIdAsyncTask();
-            getAllPostsByUserIdAsyncTask.execute();
+            InstantiateRecyclerViewWithPostsByUserIdAsyncTask instantiateRecyclerViewWithPostsByUserIdAsyncTask = new InstantiateRecyclerViewWithPostsByUserIdAsyncTask();
+            instantiateRecyclerViewWithPostsByUserIdAsyncTask.execute();
         }
     }
 
-    private class GetAllPostsByUserIdAsyncTask extends AsyncTask<Void, Void, Void> {
+    private class InstantiateRecyclerViewWithPostsByUserIdAsyncTask extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... voids) {
             DatabaseSingleton db = DatabaseSingleton.getAppDatabase(getActivity().getApplicationContext());
             List<Post> postListByUserId = db.postDao().getAllPostsByUserId(userLogged.getId());
-            final ListPostsAdapter listPostsAdapter = new ListPostsAdapter(postListByUserId);
+            listPostsAdapter = new ListPostsAdapter(postListByUserId);
             final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
             getActivity().runOnUiThread(new Runnable() {
                 @Override
@@ -226,8 +222,24 @@ public class PostFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            GetAllPostsByUserIdAsyncTask getAllPostsByUserIdAsyncTask = new GetAllPostsByUserIdAsyncTask();
-            getAllPostsByUserIdAsyncTask.execute();
+            UpdateArraylistPostsAsyncTask updateArraylistPostsAsyncTask = new UpdateArraylistPostsAsyncTask();
+            updateArraylistPostsAsyncTask.execute();
+        }
+    }
+
+    private class UpdateArraylistPostsAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            DatabaseSingleton db = DatabaseSingleton.getAppDatabase(getActivity().getApplicationContext());
+            final List<Post> posts = db.postDao().getAllPostsByUserId(userLogged.getId());
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    listPostsAdapter.setPosts(posts);
+                }
+            });
+            return null;
         }
     }
 }
