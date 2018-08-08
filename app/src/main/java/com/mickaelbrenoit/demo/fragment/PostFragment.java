@@ -36,6 +36,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static android.app.Activity.RESULT_OK;
+import static com.mickaelbrenoit.demo.RequestCode.PUT_EXTRA_OBJECT_POST;
 import static com.mickaelbrenoit.demo.RequestCode.PUT_EXTRA_TITLE_POST;
 import static com.mickaelbrenoit.demo.RequestCode.PUT_EXTRA_USER_LOGGED;
 import static com.mickaelbrenoit.demo.RequestCode.RESULT_CODE_ADD_POST;
@@ -143,5 +145,36 @@ public class PostFragment extends Fragment {
         Intent intent = new Intent(getActivity(), AddOrModifyPostActivity.class);
         intent.putExtra(PUT_EXTRA_TITLE_POST, getString(R.string.button_add_post));
         startActivityForResult(intent, RESULT_CODE_ADD_POST);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case RESULT_CODE_ADD_POST:
+                if (resultCode == RESULT_OK) {
+                    Post post = data.getParcelableExtra(PUT_EXTRA_OBJECT_POST);
+                    post.setUserId(userLogged.getId());
+
+                    InsertPostAsyncTask insertPostAsyncTask = new InsertPostAsyncTask();
+                    insertPostAsyncTask.execute(post);
+                }
+                break;
+        }
+    }
+
+    private class InsertPostAsyncTask extends AsyncTask<Post, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Post... posts) {
+            DatabaseSingleton db  = DatabaseSingleton.getAppDatabase(getActivity().getApplicationContext());
+            db.postDao().insertPost(posts[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            GetAllPostsByUserIdAsyncTask getAllPostsByUserIdAsyncTask = new GetAllPostsByUserIdAsyncTask();
+            getAllPostsByUserIdAsyncTask.execute();
+        }
     }
 }

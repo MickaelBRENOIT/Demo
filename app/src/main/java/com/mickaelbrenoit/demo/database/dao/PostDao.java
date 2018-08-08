@@ -30,4 +30,7 @@ public interface PostDao {
 
     @Query("SELECT * FROM " + TABLE_NAME_POST + " WHERE " + FOREIGN_KEY_USERID_POST + " = :userLoggedId")
     List<Post> getAllPostsByUserId(int userLoggedId);
+
+    @Insert
+    void insertPost(Post post);
 }

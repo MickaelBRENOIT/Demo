@@ -22,4 +22,6 @@
     <string name="body_post">Body</string>
     <string name="button_validate">Validate</string>
     <string name="button_cancel">Cancel</string>
+    <string name="title_check_empty">Title can\'t be empty !</string>
+    <string name="body_check_empty">Body can\'t be empty !</string>
 </resources>
