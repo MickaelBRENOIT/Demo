@@ -1,6 +1,7 @@
 package com.mickaelbrenoit.demo.fragment;
 
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -90,6 +92,57 @@ public class PostFragment extends Fragment {
                 Log.e(TAG, "onFailure: Something goes wrong: " + t.getMessage());
             }
         });
+
+        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
+//                positionSelectionnee = viewHolder.getAdapterPosition(); //get position which is swipe
+
+                if (direction == ItemTouchHelper.LEFT) {    //if swipe left
+
+//                    ficheBilanSelectionnee = ficheBilanList.get(positionSelectionnee);
+//                    GeneralDialogFragment generalDialogFragment = GeneralDialogFragment.newInstance("Suppression de la victime", "Êtes vous sûr de vouloir supprimer la victime n°" + ficheBilanSelectionnee.getOrdre_victime() + " ?", true, true, false, "Supprimer", "Annuler", null, REQUEST_CODE_LISTE_BILANS_SUPPRESSION_BILAN, null);
+//                    generalDialogFragment.setCancelable(false);
+//                    generalDialogFragment.show(getSupportFragmentManager(), "dialog");
+
+                }
+            }
+
+            @Override
+            public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+                if (viewHolder != null) {
+                    final View foregroundView = ((ListPostsAdapter.ViewHolderPost) viewHolder).view_foreground_post;
+                    getDefaultUIUtil().onSelected(foregroundView);
+                }
+            }
+
+            @Override
+            public void onChildDrawOver(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                final View foregroundView = ((ListPostsAdapter.ViewHolderPost) viewHolder).view_foreground_post;
+                getDefaultUIUtil().onDrawOver(c, recyclerView, foregroundView, dX, dY, actionState, isCurrentlyActive);
+            }
+
+            @Override
+            public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                final View foregroundView = ((ListPostsAdapter.ViewHolderPost) viewHolder).view_foreground_post;
+                getDefaultUIUtil().clearView(foregroundView);
+            }
+
+            @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                final View foregroundView = ((ListPostsAdapter.ViewHolderPost) viewHolder).view_foreground_post;
+
+                getDefaultUIUtil().onDraw(c, recyclerView, foregroundView, dX, dY, actionState, isCurrentlyActive);
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView_posts);
 
         return view;
     }

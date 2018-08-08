@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mickaelbrenoit.demo.R;
@@ -27,6 +28,11 @@ public class ListPostsAdapter extends RecyclerView.Adapter<ListPostsAdapter.View
     }
 
     public class ViewHolderPost extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.view_background_post)
+        public RelativeLayout view_background_post;
+        @BindView(R.id.view_foreground_post)
+        public RelativeLayout view_foreground_post;
 
         @BindView(R.id.textView_title_post)
         TextView textView_title_post;
