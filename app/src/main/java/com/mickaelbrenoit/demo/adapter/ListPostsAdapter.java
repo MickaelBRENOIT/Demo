@@ -85,8 +85,15 @@ public class ListPostsAdapter extends RecyclerView.Adapter<ListPostsAdapter.View
         return postList.size();
     }
 
-    public void setPosts(List<Post> posts){
+    public void notifyItemAdded(List<Post> posts){
         postList = posts;
         notifyDataSetChanged();
+    }
+
+    public void notifyItemDeleted(List<Post> posts, int position) {
+//        postList.remove(position);
+        postList = posts;
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, getItemCount());
     }
 }

@@ -19,7 +19,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.mickaelbrenoit.demo.RequestCode.PUT_EXTRA_USER_LOGGED;
+import static com.mickaelbrenoit.demo.helper.RequestCode.PUT_EXTRA_USER_LOGGED;
 
 public class LoginActivity extends AppCompatActivity {
 

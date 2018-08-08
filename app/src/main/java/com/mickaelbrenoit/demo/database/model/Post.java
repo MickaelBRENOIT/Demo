@@ -88,7 +88,7 @@ public class Post implements Parcelable{
 
     @Override
     public String toString() {
-        return "PostApi{" +
+        return "--> " +
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", body='" + body + '\'' +

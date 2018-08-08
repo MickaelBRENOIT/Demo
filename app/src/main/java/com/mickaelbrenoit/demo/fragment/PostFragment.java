@@ -24,6 +24,7 @@ import com.mickaelbrenoit.demo.api.model.PostApi;
 import com.mickaelbrenoit.demo.database.DatabaseSingleton;
 import com.mickaelbrenoit.demo.database.model.Post;
 import com.mickaelbrenoit.demo.database.model.User;
+import com.mickaelbrenoit.demo.helper.EnumCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,11 +40,11 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.app.Activity.RESULT_OK;
-import static com.mickaelbrenoit.demo.RequestCode.PUT_EXTRA_OBJECT_POST;
-import static com.mickaelbrenoit.demo.RequestCode.PUT_EXTRA_TITLE_POST;
-import static com.mickaelbrenoit.demo.RequestCode.PUT_EXTRA_USER_LOGGED;
-import static com.mickaelbrenoit.demo.RequestCode.RESULT_CODE_ADD_POST;
 import static com.mickaelbrenoit.demo.api.JsonApi.BASE_URL;
+import static com.mickaelbrenoit.demo.helper.RequestCode.PUT_EXTRA_OBJECT_POST;
+import static com.mickaelbrenoit.demo.helper.RequestCode.PUT_EXTRA_TITLE_POST;
+import static com.mickaelbrenoit.demo.helper.RequestCode.PUT_EXTRA_USER_LOGGED;
+import static com.mickaelbrenoit.demo.helper.RequestCode.RESULT_CODE_ADD_POST;
 
 public class PostFragment extends Fragment {
 
@@ -52,8 +53,9 @@ public class PostFragment extends Fragment {
     @BindView(R.id.recyclerView_posts)
     RecyclerView recyclerView_posts;
 
-    User userLogged;
-    static List<Post> postList = new ArrayList<>();
+    static User userLogged;
+    static List<Post> postListAll = new ArrayList<>();
+    static List<Post> postListByUserId = new ArrayList<>();
     static ListPostsAdapter listPostsAdapter;
 
     @Nullable
@@ -81,7 +83,7 @@ public class PostFragment extends Fragment {
 
 
                 for (PostApi postApi : response.body()) {
-                    postList.add(new Post(postApi.getId(), postApi.getTitle(), postApi.getBody(), postApi.getUserId()));
+                    postListAll.add(new Post(postApi.getId(), postApi.getTitle(), postApi.getBody(), postApi.getUserId()));
                 }
 
                 AddAllPostsAsyncTask addAllPostsAsyncTask = new AddAllPostsAsyncTask();
@@ -103,14 +105,13 @@ public class PostFragment extends Fragment {
 
             @Override
             public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
-//                positionSelectionnee = viewHolder.getAdapterPosition(); //get position which is swipe
+                int position = viewHolder.getAdapterPosition(); //get position which is swipe
 
                 if (direction == ItemTouchHelper.LEFT) {    //if swipe left
+                    Post post = postListByUserId.get(position);
 
-//                    ficheBilanSelectionnee = ficheBilanList.get(positionSelectionnee);
-//                    GeneralDialogFragment generalDialogFragment = GeneralDialogFragment.newInstance("Suppression de la victime", "Êtes vous sûr de vouloir supprimer la victime n°" + ficheBilanSelectionnee.getOrdre_victime() + " ?", true, true, false, "Supprimer", "Annuler", null, REQUEST_CODE_LISTE_BILANS_SUPPRESSION_BILAN, null);
-//                    generalDialogFragment.setCancelable(false);
-//                    generalDialogFragment.show(getSupportFragmentManager(), "dialog");
+                    UpdateArraylistPostsAsyncTask updateArraylistPostsAsyncTask = new UpdateArraylistPostsAsyncTask(EnumCode.DELETE, post, position);
+                    updateArraylistPostsAsyncTask.execute();
 
                 }
             }
@@ -154,9 +155,8 @@ public class PostFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... voids) {
             DatabaseSingleton db = DatabaseSingleton.getAppDatabase(getActivity().getApplicationContext());
-            Log.d(TAG, "doInBackground: --> " + db.postDao().getAllPosts().size());
             if (db.postDao().getAllPosts().isEmpty()) {
-                db.postDao().insertAllPosts(postList);
+                db.postDao().insertAllPosts(postListAll);
             }
             return null;
         }
@@ -173,7 +173,7 @@ public class PostFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... voids) {
             DatabaseSingleton db = DatabaseSingleton.getAppDatabase(getActivity().getApplicationContext());
-            List<Post> postListByUserId = db.postDao().getAllPostsByUserId(userLogged.getId());
+            postListByUserId = db.postDao().getAllPostsByUserId(userLogged.getId());
             listPostsAdapter = new ListPostsAdapter(postListByUserId);
             final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
             getActivity().runOnUiThread(new Runnable() {
@@ -204,39 +204,47 @@ public class PostFragment extends Fragment {
                     Post post = data.getParcelableExtra(PUT_EXTRA_OBJECT_POST);
                     post.setUserId(userLogged.getId());
 
-                    InsertPostAsyncTask insertPostAsyncTask = new InsertPostAsyncTask();
-                    insertPostAsyncTask.execute(post);
+                    UpdateArraylistPostsAsyncTask updateArraylistPostsAsyncTask = new UpdateArraylistPostsAsyncTask(EnumCode.ADD, post, null);
+                    updateArraylistPostsAsyncTask.execute();
                 }
                 break;
         }
     }
 
-    private class InsertPostAsyncTask extends AsyncTask<Post, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Post... posts) {
-            DatabaseSingleton db  = DatabaseSingleton.getAppDatabase(getActivity().getApplicationContext());
-            db.postDao().insertPost(posts[0]);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            UpdateArraylistPostsAsyncTask updateArraylistPostsAsyncTask = new UpdateArraylistPostsAsyncTask();
-            updateArraylistPostsAsyncTask.execute();
-        }
-    }
-
     private class UpdateArraylistPostsAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        private EnumCode mEnumCode;
+        private Post mPost;
+        private Integer position;
+
+        public UpdateArraylistPostsAsyncTask(EnumCode enumCode, Post post, Integer position) {
+            mEnumCode = enumCode;
+            mPost = post;
+            this.position = position;
+        }
 
         @Override
         protected Void doInBackground(Void... voids) {
+
             DatabaseSingleton db = DatabaseSingleton.getAppDatabase(getActivity().getApplicationContext());
+            if (mEnumCode == EnumCode.ADD) {
+                db.postDao().insertPost(mPost);
+            } else if (mEnumCode == EnumCode.DELETE) {
+                db.postDao().deletePost(mPost);
+            }
+
             final List<Post> posts = db.postDao().getAllPostsByUserId(userLogged.getId());
+
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    listPostsAdapter.setPosts(posts);
+                    if (mEnumCode == mEnumCode.ADD) {
+                        postListByUserId = posts;
+                        listPostsAdapter.notifyItemAdded(posts);
+                    } else if (mEnumCode == mEnumCode.DELETE) {
+                        postListByUserId = posts;
+                        listPostsAdapter.notifyItemDeleted(posts, position);
+                    }
                 }
             });
             return null;

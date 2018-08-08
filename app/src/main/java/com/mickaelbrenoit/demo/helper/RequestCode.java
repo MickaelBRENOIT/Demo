@@ -1,4 +1,4 @@
-package com.mickaelbrenoit.demo;
+package com.mickaelbrenoit.demo.helper;
 
 public class RequestCode {
 

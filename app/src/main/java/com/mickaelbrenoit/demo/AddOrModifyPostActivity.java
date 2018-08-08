@@ -17,8 +17,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Optional;
 
-import static com.mickaelbrenoit.demo.RequestCode.PUT_EXTRA_OBJECT_POST;
-import static com.mickaelbrenoit.demo.RequestCode.PUT_EXTRA_TITLE_POST;
+import static com.mickaelbrenoit.demo.helper.RequestCode.PUT_EXTRA_OBJECT_POST;
+import static com.mickaelbrenoit.demo.helper.RequestCode.PUT_EXTRA_TITLE_POST;
 
 public class AddOrModifyPostActivity extends NavigationDrawerActivity {
 

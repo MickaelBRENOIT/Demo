@@ -14,7 +14,7 @@ import com.mickaelbrenoit.demo.fragment.PostFragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.mickaelbrenoit.demo.RequestCode.PUT_EXTRA_USER_LOGGED;
+import static com.mickaelbrenoit.demo.helper.RequestCode.PUT_EXTRA_USER_LOGGED;
 
 public class FragmentActivity extends NavigationDrawerActivity {
 
