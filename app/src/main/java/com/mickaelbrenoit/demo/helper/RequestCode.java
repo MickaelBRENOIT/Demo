@@ -1,8 +1,10 @@
 package com.mickaelbrenoit.demo.helper;
 
+import java.util.Locale;
+
 public class RequestCode {
 
-    public static String LANGUAGE = "en";
+    public static String LANGUAGE = Locale.getDefault().getLanguage();
 
     public static final String PUT_EXTRA_USER_LOGGED = "USER_LOGGED";
     public static final String PUT_EXTRA_TITLE_POST = "TITLE";

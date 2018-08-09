@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mickaelbrenoit.demo.database.model.Post;
 
@@ -121,7 +120,9 @@ public class AddOrModifyPostActivity extends NavigationDrawerActivity {
     @Optional
     @OnClick(R.id.button_cancel_post)
     public void cancelPost(View v) {
-        Toast.makeText(getApplicationContext(), "Cancel", Toast.LENGTH_LONG).show();
+        Intent i = new Intent();
+        setResult(RESULT_CANCELED, i);
+        finish();
     }
 
     private void requestFocus(View view){
