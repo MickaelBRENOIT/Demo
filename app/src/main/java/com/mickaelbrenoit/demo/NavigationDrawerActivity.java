@@ -1,5 +1,6 @@
 package com.mickaelbrenoit.demo;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,6 +20,8 @@ import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.mickaelbrenoit.demo.helper.RequestCode.LANGUAGE;
 
 public abstract class NavigationDrawerActivity extends AppCompatActivity {
 
@@ -114,13 +117,15 @@ public abstract class NavigationDrawerActivity extends AppCompatActivity {
     public void onItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_english:
-                Log.d(TAG, "changeLanguageToEnglish: in");
-                Toast.makeText(getApplicationContext(), "English", Toast.LENGTH_LONG).show();
+                LANGUAGE = "en";
+                startActivity(new Intent(this, LoginActivity.class));
+                finish();
                 break;
 
             case R.id.nav_french:
-                Log.d(TAG, "changeLanguageToFrench: in");
-                Toast.makeText(getApplicationContext(), "French", Toast.LENGTH_LONG).show();
+                LANGUAGE = "fr";
+                startActivity(new Intent(this, LoginActivity.class));
+                finish();
             break;
 
             case R.id.nav_clear_database:
@@ -129,8 +134,8 @@ public abstract class NavigationDrawerActivity extends AppCompatActivity {
             break;
 
             case R.id.nav_logout:
-                Log.d(TAG, "logout: in");
-                Toast.makeText(getApplicationContext(), "Logout", Toast.LENGTH_LONG).show();
+                startActivity(new Intent(this, LoginActivity.class));
+                finish();
             break;
         }
     }

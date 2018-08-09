@@ -3,11 +3,13 @@ package com.mickaelbrenoit.demo;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -15,10 +17,13 @@ import android.widget.Toast;
 import com.mickaelbrenoit.demo.database.DatabaseSingleton;
 import com.mickaelbrenoit.demo.database.model.User;
 
+import java.util.Locale;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.mickaelbrenoit.demo.helper.RequestCode.LANGUAGE;
 import static com.mickaelbrenoit.demo.helper.RequestCode.PUT_EXTRA_USER_LOGGED;
 
 public class LoginActivity extends AppCompatActivity {
@@ -36,6 +41,14 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Only need to be declared once if the app orientation does not change
+        Resources res = getApplicationContext().getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        android.content.res.Configuration conf = res.getConfiguration();
+        conf.setLocale(new Locale(LANGUAGE.toLowerCase())); // API 17+ only.
+        res.updateConfiguration(conf, dm);
+
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
     }
