@@ -18,6 +18,8 @@ import static com.mickaelbrenoit.demo.helper.RequestCode.PUT_EXTRA_USER_LOGGED;
 
 public class FragmentActivity extends NavigationDrawerActivity {
 
+    private static final String TAG = "FragmentActivity";
+
     @Nullable @BindView(R.id.navigation)
     BottomNavigationView navigation;
 
@@ -70,4 +72,11 @@ public class FragmentActivity extends NavigationDrawerActivity {
         return false;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            fragment.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 }

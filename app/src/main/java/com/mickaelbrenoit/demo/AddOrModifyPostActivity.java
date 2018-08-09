@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -21,6 +22,8 @@ import static com.mickaelbrenoit.demo.helper.RequestCode.PUT_EXTRA_OBJECT_POST;
 import static com.mickaelbrenoit.demo.helper.RequestCode.PUT_EXTRA_TITLE_POST;
 
 public class AddOrModifyPostActivity extends NavigationDrawerActivity {
+
+    private static final String TAG = "AddOrModifyPostActivity";
 
     @Nullable
     @BindView(R.id.textView_title_post_activity)
@@ -50,10 +53,14 @@ public class AddOrModifyPostActivity extends NavigationDrawerActivity {
         ButterKnife.bind(this);
 
         Intent intent = getIntent();
+        Log.d(TAG, "onCreate: Package: " + intent.getPackage() + ", Class: " + intent.getClass() + ", Type: " + intent.getType() + ", Action: " + intent.getAction());
         String title = intent.getStringExtra(PUT_EXTRA_TITLE_POST);
         textView_title_post_activity.setText(title);
         if (intent.getParcelableExtra(PUT_EXTRA_OBJECT_POST) != null) {
             post = intent.getParcelableExtra(PUT_EXTRA_OBJECT_POST);
+
+            textInputEditText_title_post_object.setText(post.getTitle());
+            textInputEditText_body_post_object.setText(post.getBody());
         }
 
     }
@@ -62,7 +69,11 @@ public class AddOrModifyPostActivity extends NavigationDrawerActivity {
     @OnClick(R.id.button_validate_post)
     public void validatePost(View v) {
         if (submitForm()) {
-            post = new Post();
+
+            if (post == null) {
+                post = new Post();
+            }
+
             post.setTitle(textInputEditText_title_post_object.getText().toString());
             post.setBody(textInputEditText_body_post_object.getText().toString());
 

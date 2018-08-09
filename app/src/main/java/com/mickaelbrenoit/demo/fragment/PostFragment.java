@@ -45,6 +45,7 @@ import static com.mickaelbrenoit.demo.helper.RequestCode.PUT_EXTRA_OBJECT_POST;
 import static com.mickaelbrenoit.demo.helper.RequestCode.PUT_EXTRA_TITLE_POST;
 import static com.mickaelbrenoit.demo.helper.RequestCode.PUT_EXTRA_USER_LOGGED;
 import static com.mickaelbrenoit.demo.helper.RequestCode.RESULT_CODE_ADD_POST;
+import static com.mickaelbrenoit.demo.helper.RequestCode.RESULT_CODE_MODIFY_POST;
 
 public class PostFragment extends Fragment {
 
@@ -174,7 +175,7 @@ public class PostFragment extends Fragment {
         protected Void doInBackground(Void... voids) {
             DatabaseSingleton db = DatabaseSingleton.getAppDatabase(getActivity().getApplicationContext());
             postListByUserId = db.postDao().getAllPostsByUserId(userLogged.getId());
-            listPostsAdapter = new ListPostsAdapter(postListByUserId);
+            listPostsAdapter = new ListPostsAdapter(postListByUserId, getActivity());
             final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
             getActivity().runOnUiThread(new Runnable() {
                 @Override
@@ -208,6 +209,15 @@ public class PostFragment extends Fragment {
                     updateArraylistPostsAsyncTask.execute();
                 }
                 break;
+
+            case RESULT_CODE_MODIFY_POST:
+                if (resultCode == RESULT_OK) {
+                    Post post = data.getParcelableExtra(PUT_EXTRA_OBJECT_POST);
+
+                    UpdateArraylistPostsAsyncTask updateArraylistPostsAsyncTask = new UpdateArraylistPostsAsyncTask(EnumCode.MODIFY, post, null);
+                    updateArraylistPostsAsyncTask.execute();
+                }
+                break;
         }
     }
 
@@ -229,6 +239,8 @@ public class PostFragment extends Fragment {
             DatabaseSingleton db = DatabaseSingleton.getAppDatabase(getActivity().getApplicationContext());
             if (mEnumCode == EnumCode.ADD) {
                 db.postDao().insertPost(mPost);
+            } else if (mEnumCode == EnumCode.MODIFY) {
+                db.postDao().updatePost(mPost);
             } else if (mEnumCode == EnumCode.DELETE) {
                 db.postDao().deletePost(mPost);
             }
@@ -241,6 +253,9 @@ public class PostFragment extends Fragment {
                     if (mEnumCode == mEnumCode.ADD) {
                         postListByUserId = posts;
                         listPostsAdapter.notifyItemAdded(posts);
+                    } else if (mEnumCode == mEnumCode.MODIFY) {
+                        postListByUserId = posts;
+                        listPostsAdapter.notifyItemUpdated(posts);
                     } else if (mEnumCode == mEnumCode.DELETE) {
                         postListByUserId = posts;
                         listPostsAdapter.notifyItemDeleted(posts, position);
