@@ -7,4 +7,6 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fifty_six">56dp</dimen>
     <dimen name="thirty">30dp</dimen>
+    <dimen name="sixteen_sp">16sp</dimen>
+    <dimen name="five_dp">5dp</dimen>
 </resources>

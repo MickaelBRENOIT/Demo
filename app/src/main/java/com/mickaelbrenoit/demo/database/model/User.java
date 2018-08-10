@@ -127,4 +127,9 @@ public class User implements Parcelable{
         email = in.readString();
         password = in.readString();
     }
+
+    @Override
+    public String toString() {
+        return username;
+    }
 }

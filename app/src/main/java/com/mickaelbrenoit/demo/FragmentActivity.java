@@ -6,9 +6,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.mickaelbrenoit.demo.database.model.User;
+import com.mickaelbrenoit.demo.fragment.AlbumFragment;
 import com.mickaelbrenoit.demo.fragment.PostFragment;
 
 import butterknife.BindView;
@@ -30,17 +32,22 @@ public class FragmentActivity extends NavigationDrawerActivity {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            Log.d(TAG, "onNavigationItemSelected: in");
             Fragment fragment = null;
 
             switch (item.getItemId()) {
                 case R.id.navigation_post:
+                    Log.d(TAG, "onNavigationItemSelected: postfragment");
                     fragment = new PostFragment();
-                    return true;
+                    break;
                 case R.id.navigation_photo:
-                    return true;
+                    Log.d(TAG, "onNavigationItemSelected: albumfragment");
+                    fragment = new AlbumFragment();
+                    break;
                 case R.id.navigation_notifications:
                     return true;
             }
+
             return loadFragment(fragment, userLogged);
         }
     };
