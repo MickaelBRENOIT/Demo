@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,7 +16,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.mickaelbrenoit.demo.R;
+import com.mickaelbrenoit.demo.adapter.ListAlbumsAdapter;
+import com.mickaelbrenoit.demo.api.JsonApi;
+import com.mickaelbrenoit.demo.api.model.AlbumApi;
 import com.mickaelbrenoit.demo.database.DatabaseSingleton;
+import com.mickaelbrenoit.demo.database.model.Album;
 import com.mickaelbrenoit.demo.database.model.User;
 
 import java.util.ArrayList;
@@ -23,7 +29,13 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnItemSelected;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.mickaelbrenoit.demo.api.JsonApi.BASE_URL;
 import static com.mickaelbrenoit.demo.helper.RequestCode.PUT_EXTRA_USER_LOGGED;
 
 public class AlbumFragment extends Fragment {
@@ -33,10 +45,14 @@ public class AlbumFragment extends Fragment {
     @BindView(R.id.spinner_list_users)
     Spinner spinner_list_users;
     static ArrayAdapter<String> spinnerUsersAdapter;
+
     @BindView(R.id.recyclerView_albums)
     RecyclerView recyclerView_albums;
+    static ListAlbumsAdapter listAlbumsAdapter;
 
     static User userLogged;
+    static List<Album> albumListAll = new ArrayList<>();
+    static List<Album> albumListByUserId = new ArrayList<>();
 
     @Nullable
     @Override
@@ -52,7 +68,72 @@ public class AlbumFragment extends Fragment {
         InstantiateSpinnerUsers instantiateSpinnerUsers = new InstantiateSpinnerUsers();
         instantiateSpinnerUsers.execute();
 
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
+
+        JsonApi jsonApi = retrofit.create(JsonApi.class);
+        Call<List<AlbumApi>> call = jsonApi.getAlbums();
+
+        call.enqueue(new Callback<List<AlbumApi>>(){
+            @Override
+            public void onResponse(Call<List<AlbumApi>> call, Response<List<AlbumApi>> response) {
+                Log.d(TAG, "onResponse: Server response: " + response.toString());
+                Log.d(TAG, "onResponse: size: " +  response.body().size());
+
+
+                for (AlbumApi albumApi : response.body()) {
+                    albumListAll.add(new Album(albumApi.getId(), albumApi.getTitle(), albumApi.getUserId()));
+                }
+
+                AddAllAlbumsAsyncTask addAllAlbumsAsyncTask = new AddAllAlbumsAsyncTask();
+                addAllAlbumsAsyncTask.execute();
+
+            }
+
+            @Override
+            public void onFailure(Call<List<AlbumApi>> call, Throwable t) {
+                Log.e(TAG, "onFailure: Something goes wrong: " + t.getMessage());
+            }
+        });
+
         return view;
+    }
+
+    private class AddAllAlbumsAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            DatabaseSingleton db = com.mickaelbrenoit.demo.database.DatabaseSingleton.getAppDatabase(getActivity().getApplicationContext());
+            if (db.albumDao().getAllAlbums().isEmpty()) {
+                db.albumDao().insertAllAlbums(albumListAll);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            InstantiateRecyclerViewWithAlbumsByUserIdAsyncTask instantiateRecyclerViewWithAlbumsByUserIdAsyncTask = new InstantiateRecyclerViewWithAlbumsByUserIdAsyncTask();
+            instantiateRecyclerViewWithAlbumsByUserIdAsyncTask.execute();
+        }
+    }
+
+    private class InstantiateRecyclerViewWithAlbumsByUserIdAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            DatabaseSingleton db = DatabaseSingleton.getAppDatabase(getActivity().getApplicationContext());
+            albumListByUserId = db.albumDao().getAllAlbumsByUserId(userLogged.getId());
+            listAlbumsAdapter = new ListAlbumsAdapter(albumListByUserId, getActivity());
+            final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    recyclerView_albums.setLayoutManager(mLayoutManager);
+                    recyclerView_albums.setItemAnimator(new DefaultItemAnimator());
+                    recyclerView_albums.setAdapter(listAlbumsAdapter);
+                }
+            });
+            return null;
+        }
     }
 
     private class InstantiateSpinnerUsers extends AsyncTask<Void, Void, List<String>> {

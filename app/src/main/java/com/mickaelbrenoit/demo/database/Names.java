@@ -16,4 +16,9 @@ public class Names {
     public static final String FIELD_TITLE_POST = "title";
     public static final String FIELD_BODY_POST = "body";
     public static final String FOREIGN_KEY_USERID_POST = "userId";
+
+    public static final String TABLE_NAME_ALBUM = "albums";
+    public static final String PRIMARY_KEY_ALBUM = "id";
+    public static final String FIELD_TITLE_ALBUM = "title";
+    public static final String FOREIGN_KEY_USERID_ALBUM = "userId";
 }

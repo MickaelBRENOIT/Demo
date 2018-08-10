@@ -8,8 +8,10 @@ import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.mickaelbrenoit.demo.database.dao.AlbumDao;
 import com.mickaelbrenoit.demo.database.dao.PostDao;
 import com.mickaelbrenoit.demo.database.dao.UserDao;
+import com.mickaelbrenoit.demo.database.model.Album;
 import com.mickaelbrenoit.demo.database.model.Post;
 import com.mickaelbrenoit.demo.database.model.User;
 
@@ -17,12 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 
-@Database(entities = {User.class, Post.class}, version = 1, exportSchema = false)
+@Database(entities = {User.class, Post.class, Album.class}, version = 1, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class DatabaseSingleton extends RoomDatabase {
 
     public abstract UserDao userDao();
     public abstract PostDao postDao();
+    public abstract AlbumDao albumDao();
 
     private static DatabaseSingleton INSTANCE;
 
@@ -53,7 +56,7 @@ public abstract class DatabaseSingleton extends RoomDatabase {
                             });
                         }
                     })
-                    .allowMainThreadQueries()
+                    //.allowMainThreadQueries()
                     .build();
         }
         return INSTANCE;

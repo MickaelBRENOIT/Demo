@@ -1,5 +1,6 @@
 package com.mickaelbrenoit.demo.api;
 
+import com.mickaelbrenoit.demo.api.model.AlbumApi;
 import com.mickaelbrenoit.demo.api.model.PostApi;
 
 import java.util.List;
@@ -15,5 +16,9 @@ public interface JsonApi {
     @Headers("Content-Type: application/json")
     @GET("posts")
     Call<List<PostApi>> getPosts();
+
+    @Headers("Content-Type: application/json")
+    @GET("albums")
+    Call<List<AlbumApi>> getAlbums();
 
 }
