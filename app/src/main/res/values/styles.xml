@@ -12,4 +12,14 @@
         <item name="android:windowBackground">@drawable/background</item>
     </style>
 
+    <style name="AppTheme.Button.Cancel" parent="Widget.AppCompat.Button.Colored">
+        <item name="colorButtonNormal">@color/colorRed</item>
+        <item name="android:textColor">@color/colorWhite</item>
+    </style>
+
+    <style name="AppTheme.Button.Validate" parent="Widget.AppCompat.Button.Colored">
+        <item name="colorButtonNormal">@color/colorGreen</item>
+        <item name="android:textColor">@color/colorWhite</item>
+    </style>
+
 </resources>
