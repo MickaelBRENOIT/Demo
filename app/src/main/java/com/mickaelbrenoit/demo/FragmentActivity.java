@@ -36,7 +36,7 @@ public class FragmentActivity extends NavigationDrawerActivity {
                 case R.id.navigation_post:
                     fragment = new PostFragment();
                     return true;
-                case R.id.navigation_dashboard:
+                case R.id.navigation_photo:
                     return true;
                 case R.id.navigation_notifications:
                     return true;
