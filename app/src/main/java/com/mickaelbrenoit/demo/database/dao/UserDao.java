@@ -12,6 +12,7 @@ import java.util.List;
 
 import static com.mickaelbrenoit.demo.database.Names.FIELD_PASSWORD_USER;
 import static com.mickaelbrenoit.demo.database.Names.FIELD_USERNAME_USER;
+import static com.mickaelbrenoit.demo.database.Names.PRIMARY_KEY_USER;
 import static com.mickaelbrenoit.demo.database.Names.TABLE_NAME_USER;
 
 @Dao
@@ -33,4 +34,7 @@ public interface UserDao {
             " WHERE " + FIELD_USERNAME_USER + " = :username" +
             " AND " + FIELD_PASSWORD_USER + " = :password")
     User login(String username, String password);
+
+    @Query("SELECT " + FIELD_USERNAME_USER + " FROM " + TABLE_NAME_USER + " WHERE " + PRIMARY_KEY_USER + " = :id")
+    String getUsernameByUserId(Integer id);
 }

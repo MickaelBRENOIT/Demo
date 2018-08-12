@@ -65,9 +65,6 @@ public class AlbumFragment extends Fragment {
             userLogged = bundle.getParcelable(PUT_EXTRA_USER_LOGGED);
         }
 
-        InstantiateSpinnerUsers instantiateSpinnerUsers = new InstantiateSpinnerUsers();
-        instantiateSpinnerUsers.execute();
-
         Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
 
         JsonApi jsonApi = retrofit.create(JsonApi.class);
@@ -130,6 +127,8 @@ public class AlbumFragment extends Fragment {
                     recyclerView_albums.setLayoutManager(mLayoutManager);
                     recyclerView_albums.setItemAnimator(new DefaultItemAnimator());
                     recyclerView_albums.setAdapter(listAlbumsAdapter);
+                    InstantiateSpinnerUsers instantiateSpinnerUsers = new InstantiateSpinnerUsers();
+                    instantiateSpinnerUsers.execute();
                 }
             });
             return null;
@@ -195,5 +194,29 @@ public class AlbumFragment extends Fragment {
     @OnItemSelected(R.id.spinner_list_users)
     public void onItemSpinnerUsersSelected(Spinner spinner) {
         Log.d(TAG, "onItemSpinnerUsersSelected: pos --> " + spinner.getSelectedItemPosition());
+        Log.d(TAG, "onItemSpinnerUsersSelected: str --> " + spinner.getSelectedItem().toString());
+
+        UpdateListAlbumAsyncTask updateListAlbumAsyncTask = new UpdateListAlbumAsyncTask();
+        updateListAlbumAsyncTask.execute(spinner.getSelectedItem().toString());
+    }
+
+    private class UpdateListAlbumAsyncTask extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            DatabaseSingleton db = DatabaseSingleton.getAppDatabase(getActivity().getApplicationContext());
+            albumListByUserId = db.albumDao().getAllAlbumsByUsername(strings[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    listAlbumsAdapter.notifyItemUpdated(albumListByUserId);
+                }
+            });
+        }
     }
 }

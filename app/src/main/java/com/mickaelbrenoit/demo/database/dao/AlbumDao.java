@@ -10,8 +10,11 @@ import com.mickaelbrenoit.demo.database.model.Album;
 
 import java.util.List;
 
+import static com.mickaelbrenoit.demo.database.Names.FIELD_USERNAME_USER;
 import static com.mickaelbrenoit.demo.database.Names.FOREIGN_KEY_USERID_ALBUM;
+import static com.mickaelbrenoit.demo.database.Names.PRIMARY_KEY_USER;
 import static com.mickaelbrenoit.demo.database.Names.TABLE_NAME_ALBUM;
+import static com.mickaelbrenoit.demo.database.Names.TABLE_NAME_USER;
 
 @Dao
 public interface AlbumDao {
@@ -36,4 +39,9 @@ public interface AlbumDao {
 
     @Query("SELECT * FROM " + TABLE_NAME_ALBUM + " WHERE " + FOREIGN_KEY_USERID_ALBUM + " = :userId")
     List<Album> getAllAlbumsByUserId(int userId);
+
+    @Query("SELECT * FROM " + TABLE_NAME_ALBUM +
+            " INNER JOIN " + TABLE_NAME_USER + " ON " + TABLE_NAME_ALBUM+"."+FOREIGN_KEY_USERID_ALBUM + " = " + TABLE_NAME_USER+"."+PRIMARY_KEY_USER +
+            " WHERE " + FIELD_USERNAME_USER + " = :username")
+    List<Album> getAllAlbumsByUsername(String username);
 }
