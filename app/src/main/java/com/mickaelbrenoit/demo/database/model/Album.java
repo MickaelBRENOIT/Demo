@@ -5,6 +5,8 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import static com.mickaelbrenoit.demo.database.Names.FIELD_TITLE_ALBUM;
@@ -17,7 +19,7 @@ import static com.mickaelbrenoit.demo.database.Names.TABLE_NAME_ALBUM;
         foreignKeys = @ForeignKey(  entity = User.class,
                                     parentColumns = PRIMARY_KEY_USER,
                                     childColumns = FOREIGN_KEY_USERID_ALBUM))
-public class Album {
+public class Album implements Parcelable{
 
     @PrimaryKey
     @NonNull
@@ -76,5 +78,33 @@ public class Album {
                 ", title='" + title + '\'' +
                 ", userId=" + userId +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeString(title);
+        parcel.writeInt(userId);
+    }
+
+    public static final Parcelable.Creator<Album> CREATOR = new Parcelable.Creator<Album>() {
+        public Album createFromParcel(Parcel in) {
+            return new Album(in);
+        }
+
+        public Album[] newArray(int size) {
+            return new Album[size];
+        }
+    };
+
+    public Album (Parcel in) {
+        id = in.readInt();
+        title = in.readString();
+        userId = in.readInt();
     }
 }

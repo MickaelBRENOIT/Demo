@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,31 +57,11 @@ public class ListAlbumsAdapter extends RecyclerView.Adapter<ListAlbumsAdapter.Vi
         final Album album = albumList.get(position);
 
         holder.textView_title_album.setText(album.getTitle());
-//        holder.textView_author_album.setText(String.valueOf(album.getUserId()));
 
         GetUserUsernameByAsyncTask getUserUsernameByAsyncTask = new GetUserUsernameByAsyncTask(holder.textView_author_album);
         getUserUsernameByAsyncTask.execute(album.getUserId());
 
-        Log.d(TAG, "onBindViewHolder: --> pos: " + position + ", str: " + holder.textView_author_album.getText().toString());
-
     }
-
-//    private class GetUserUsernameByAsyncTask extends AsyncTask<Integer, Void, Void>{
-//
-//        private TextView textView_author_album;
-//
-//        public GetUserUsernameByAsyncTask(TextView textView_author_album) {
-//            this.textView_author_album = textView_author_album;
-//        }
-//
-//        @Override
-//        protected Void doInBackground(Integer... integers) {
-//            DatabaseSingleton db = DatabaseSingleton.getAppDatabase(fragmentActivity.getApplicationContext());
-//            String username = db.userDao().getUsernameByUserId(integers[0]);
-//            textView_author_album.setText(username);
-//            return null;
-//        }
-//    }
 
     private class GetUserUsernameByAsyncTask extends AsyncTask<Integer, Void, String>{
 

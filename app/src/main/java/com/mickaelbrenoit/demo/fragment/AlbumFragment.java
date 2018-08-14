@@ -1,5 +1,6 @@
 package com.mickaelbrenoit.demo.fragment;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.mickaelbrenoit.demo.DisplayAllPhotosActivity;
 import com.mickaelbrenoit.demo.R;
 import com.mickaelbrenoit.demo.adapter.ListAlbumsAdapter;
 import com.mickaelbrenoit.demo.api.JsonApi;
@@ -22,6 +24,7 @@ import com.mickaelbrenoit.demo.api.model.AlbumApi;
 import com.mickaelbrenoit.demo.database.DatabaseSingleton;
 import com.mickaelbrenoit.demo.database.model.Album;
 import com.mickaelbrenoit.demo.database.model.User;
+import com.mickaelbrenoit.demo.helper.RecyclerTouchListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +39,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.mickaelbrenoit.demo.api.JsonApi.BASE_URL;
+import static com.mickaelbrenoit.demo.helper.RequestCode.PUT_EXTRA_OBJECT_ALBUM;
 import static com.mickaelbrenoit.demo.helper.RequestCode.PUT_EXTRA_USER_LOGGED;
 
 public class AlbumFragment extends Fragment {
@@ -53,6 +57,8 @@ public class AlbumFragment extends Fragment {
     static User userLogged;
     static List<Album> albumListAll = new ArrayList<>();
     static List<Album> albumListByUserId = new ArrayList<>();
+
+    boolean isFirstTime = true;
 
     @Nullable
     @Override
@@ -73,9 +79,6 @@ public class AlbumFragment extends Fragment {
         call.enqueue(new Callback<List<AlbumApi>>(){
             @Override
             public void onResponse(Call<List<AlbumApi>> call, Response<List<AlbumApi>> response) {
-                Log.d(TAG, "onResponse: Server response: " + response.toString());
-                Log.d(TAG, "onResponse: size: " +  response.body().size());
-
 
                 for (AlbumApi albumApi : response.body()) {
                     albumListAll.add(new Album(albumApi.getId(), albumApi.getTitle(), albumApi.getUserId()));
@@ -91,6 +94,23 @@ public class AlbumFragment extends Fragment {
                 Log.e(TAG, "onFailure: Something goes wrong: " + t.getMessage());
             }
         });
+
+        recyclerView_albums.addOnItemTouchListener(new RecyclerTouchListener(getContext(), recyclerView_albums, new RecyclerTouchListener.ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                Album album = albumListByUserId.get(position);
+
+                Intent intent = new Intent(getActivity(), DisplayAllPhotosActivity.class);
+                intent.putExtra(PUT_EXTRA_OBJECT_ALBUM, album);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+                // Nothing to do here
+            }
+
+        }));
 
         return view;
     }
@@ -188,16 +208,21 @@ public class AlbumFragment extends Fragment {
             spinnerUsersAdapter.setDropDownViewResource(R.layout.custom_spinner_text);
             spinner_list_users.setAdapter(spinnerUsersAdapter);
             spinner_list_users.setSelection(spinnerUsersAdapter.getPosition(userLogged.getUsername()));
+
+
         }
     }
 
     @OnItemSelected(R.id.spinner_list_users)
     public void onItemSpinnerUsersSelected(Spinner spinner) {
-        Log.d(TAG, "onItemSpinnerUsersSelected: pos --> " + spinner.getSelectedItemPosition());
-        Log.d(TAG, "onItemSpinnerUsersSelected: str --> " + spinner.getSelectedItem().toString());
 
-        UpdateListAlbumAsyncTask updateListAlbumAsyncTask = new UpdateListAlbumAsyncTask();
-        updateListAlbumAsyncTask.execute(spinner.getSelectedItem().toString());
+        if (!isFirstTime) {
+            UpdateListAlbumAsyncTask updateListAlbumAsyncTask = new UpdateListAlbumAsyncTask();
+            updateListAlbumAsyncTask.execute(spinner.getSelectedItem().toString());
+        } else {
+            isFirstTime = false;
+        }
+
     }
 
     private class UpdateListAlbumAsyncTask extends AsyncTask<String, Void, Void> {

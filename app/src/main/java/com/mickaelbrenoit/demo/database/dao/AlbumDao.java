@@ -40,7 +40,7 @@ public interface AlbumDao {
     @Query("SELECT * FROM " + TABLE_NAME_ALBUM + " WHERE " + FOREIGN_KEY_USERID_ALBUM + " = :userId")
     List<Album> getAllAlbumsByUserId(int userId);
 
-    @Query("SELECT * FROM " + TABLE_NAME_ALBUM +
+    @Query("SELECT " + TABLE_NAME_ALBUM + ".*" + " FROM " + TABLE_NAME_ALBUM + " AS " + TABLE_NAME_ALBUM +
             " INNER JOIN " + TABLE_NAME_USER + " ON " + TABLE_NAME_ALBUM+"."+FOREIGN_KEY_USERID_ALBUM + " = " + TABLE_NAME_USER+"."+PRIMARY_KEY_USER +
             " WHERE " + FIELD_USERNAME_USER + " = :username")
     List<Album> getAllAlbumsByUsername(String username);
